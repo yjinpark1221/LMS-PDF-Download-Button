@@ -33,7 +33,6 @@ function sendDownloadMessage(myUrl, myFilename) {
 // pdf에 해당하는 content id가 있을 경우 호출됨
 function downloadPDF(title) {
   pdfname = title + '.pdf';
-  console.log('https://hycms.hanyang.ac.kr/contents14/hanyang101/' + titleToContentId[pdfname] + '/contents/web_files/original.pdf');
   pdflink = 'https://hycms.hanyang.ac.kr/contents14/hanyang101/' + titleToContentId[pdfname] + '/contents/web_files/original.pdf';
   sendDownloadMessage(pdflink, pdfname);
 }
@@ -50,11 +49,9 @@ function sendRequestOfLists(type) {
   request.setRequestHeader('Authorization', 'Bearer ' + token);
   request.onload = function () {
     content_list = JSON.parse(request.response);
-    console.log(content_list);
     for (var i = 0; i < content_list.length; ++i) {
       if (content_list[i].commons_content) {
         if (content_list[i].commons_content.content_type == type) {
-          console.log(content_list[i].commons_content.content_id);
           titleToContentId[content_list[i].commons_content.file_name] = content_list[i].commons_content.content_id;
         }
       }
