@@ -45,7 +45,7 @@ function sendRequestOfLists(type) {
   // console.log(token);
 
   const request = new XMLHttpRequest();
-  const url = 'https://learning.hanyang.ac.kr/learningx/api/v1/courses/' + data_course_id + '/allcomponents_db?user_id=' + data_user_id + '&user_login=' + data_user_login + '&role=1';
+  const url = 'https://learning.hanyang.ac.kr/learningx/api/v1/courses/' + data_course_id + '/allcomponents_db?user_id=' + data_user_id + '&user_login=' + data_user_login + '&role=' + data_role;
   request.open('GET', url, true);
   request.setRequestHeader('Accept', 'application/json');
   request.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -70,11 +70,16 @@ function addDownloadButton(element, title) {
   // 버튼이 이미 있는지 확인
   if (element.getElementsByClassName("pdf_download_button")) return;
 
+  console.log('adding button');
+
   // 버튼 엘리먼트 생성
   var but = document.createElement("button");
   but.innerHTML = "Download";
   but.class = "pdf_download_button";
 
+  console.log('title = ' + title);
+  console.log('contentId = ' + titleToContentId[title + '.pdf']);
+  
   if (titleToContentId[title + '.pdf']) element.appendChild(but);
 
   but.addEventListener("click", function (event) {
