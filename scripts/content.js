@@ -101,7 +101,7 @@ function init() {
     const components_type1 = root.getElementsByClassName("xncb-component-wrapper  ");
     for (var i = 0; i < components_type1.length; ++i) {
       const title = components_type1[i].getElementsByClassName("xncb-component-title")[0].innerHTML;
-      addDownloadButton(components_type1[i], title);
+      addDownloadButton(components_type1[i].getElementsByClassName("xncb-component-sub-wrapper")[0], title);
     }
     const components_type2 = root.getElementsByClassName("xnci-description pdf");
     for (var i = 0; i < components_type2.length; ++i) {
