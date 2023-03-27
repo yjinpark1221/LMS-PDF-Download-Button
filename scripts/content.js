@@ -55,7 +55,7 @@ function sendRequestOfLists(type) {
     for (var i = 0; i < content_list.length; ++i) {
       if (content_list[i].commons_content) {
         if (content_list[i].commons_content.content_type == type) {
-          // console.log(content_list[i].commons_content.view_url);
+          console.log(content_list[i].commons_content.content_id);
           titleToContentId[content_list[i].commons_content.file_name] = content_list[i].commons_content.content_id;
         }
       }
