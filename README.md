@@ -46,7 +46,7 @@ LMS에서 pdf 파일로 된 강의자료를 다운로드 받는 과정이 귀찮
 'Download ZIP'을 누른다.
 
 4. 압축파일을 해제하고 그 폴더의 위치를 기억한다.  
-5. [크롬 익스텐션 링크](chrome://extensions)에 들어간다.
+5. 'chrome://extensions'에 들어간다.
 
 6. ![개발자모드 토글](https://user-images.githubusercontent.com/67498785/227867166-c9f531ac-8f72-46e7-b3b2-8bf790903610.png)
 오른쪽 위 개발자모드 토글 버튼을 눌러 개발자 모드를 활성화한다.
