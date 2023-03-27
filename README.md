@@ -6,15 +6,15 @@
 
 - 여러분의 정보를 팔거나 수집하지 않습니다. 
 
-- 다운로드의 기능을 제공하기 위해 강의 아이디, 사용자 아이디, 그리고 LMS API에 사용되는 토큰을 내부적으로 저장합니다. 
+- 다운로드의 기능을 제공하기 위해 강의 아이디, 사용자 아이디, 그리고 LMS API에 사용되는 토큰을 브라우저 내부적으로만 저장합니다. 
 
 ##  Privacy Policy
 
-This chrome extension does handle personal user data, but stores the information locally and does not send user data to the server. 
+This chrome extension does handle personal user data, but stores the information locally in browser storage and does not send user data to the server. 
 
 - We do not sell or collect your data.
 
-- To provide you with the downloading button, we store your course id, user id, and token for LMS API locally. 
+- To provide you with the downloading button, we store your course id, user id, and token for LMS API locally in browser storage only. 
 
 
 

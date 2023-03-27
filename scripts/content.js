@@ -1,5 +1,5 @@
 var titleToContentId = {};
-var data_course_id = 0, data_user_login = 0, data_user_id = 0;
+var data_course_id = 0, data_user_login = 0, data_user_id = 0, data_role = 0;
 
 var check = 0;
 
@@ -41,7 +41,7 @@ function downloadPDF(title) {
 // allcomponents_db request 보내고 title과 content id를 전역변수에 저장하기
 function sendRequestOfLists(type) {
   const token = getCookie('xn_api_token');
-  console.log(token);
+  // console.log(token);
 
   const request = new XMLHttpRequest();
   const url = 'https://learning.hanyang.ac.kr/learningx/api/v1/courses/' + data_course_id + '/allcomponents_db?user_id=' + data_user_id + '&user_login=' + data_user_login + '&role=1';
@@ -50,11 +50,11 @@ function sendRequestOfLists(type) {
   request.setRequestHeader('Authorization', 'Bearer ' + token);
   request.onload = function () {
     content_list = JSON.parse(request.response);
-    console.log(content_list);
+    // console.log(content_list);
     for (var i = 0; i < content_list.length; ++i) {
       if (content_list[i].commons_content) {
         if (content_list[i].commons_content.content_type == type) {
-          console.log(content_list[i].commons_content.view_url);
+          // console.log(content_list[i].commons_content.view_url);
           titleToContentId[content_list[i].commons_content.file_name] = content_list[i].commons_content.content_id;
         }
       }
@@ -67,11 +67,12 @@ function sendRequestOfLists(type) {
 function addDownloadButton(element, title) {
 
   // 버튼이 이미 있는지 확인
-  if (element.querySelector("button")) return;
+  if (element.getElementsByClassName("pdf_download_button")) return;
 
   // 버튼 엘리먼트 생성
   var but = document.createElement("button");
   but.innerHTML = "Download";
+  but.class = "pdf_download_button";
 
   if (titleToContentId[title + '.pdf']) element.appendChild(but);
 
@@ -93,7 +94,9 @@ function init() {
   data_course_id = root.getAttribute('data-course_id');
   data_user_login = root.getAttribute('data-user_login');
   data_user_id = root.getAttribute('data-user_id');
-  console.log(data_course_id, data_user_login, data_user_id);
+  data_role = root.getAttribute('data-role');
+
+  // console.log(data_course_id, data_user_login, data_user_id);
   // root 엘리먼트에 새로운 component-wrapper 노드가 추가되면 다운로드 버튼 추가 함수 호출하기
   root.addEventListener('DOMNodeInserted', function () {
     const components_type1 = root.getElementsByClassName("xncb-component-wrapper  ");
@@ -102,8 +105,8 @@ function init() {
     }
     const components_type2 = root.getElementsByClassName("xnci-description pdf");
     for (var i = 0; i < components_type2.length; ++i) {
-      console.log(components_type2[i]);
-      console.log(components_type2[i].getElementsByClassName("xnci-component-title")[0].innerHTML);
+      // console.log(components_type2[i]);
+      // console.log(components_type2[i].getElementsByClassName("xnci-component-title")[0].innerHTML);
       addDownloadButton(components_type2[i].getElementsByClassName("xnci-component-description-row-right")[0], components_type2[i].getElementsByClassName("xnci-component-title")[0].innerHTML);
     }
   });
