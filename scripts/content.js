@@ -42,7 +42,6 @@ function downloadPDF(title) {
 // allcomponents_db request 보내고 title과 content id를 전역변수에 저장하기
 function sendRequestOfLists(type) {
   const token = getCookie('xn_api_token');
-  // console.log(token);
 
   const request = new XMLHttpRequest();
   const url = 'https://learning.hanyang.ac.kr/learningx/api/v1/courses/' + data_course_id + '/allcomponents_db?user_id=' + data_user_id + '&user_login=' + data_user_login + '&role=' + data_role;
@@ -68,18 +67,13 @@ function sendRequestOfLists(type) {
 function addDownloadButton(element, title) {
 
   // 버튼이 이미 있는지 확인
-  if (element.getElementsByClassName("pdf_download_button")) return;
-
-  console.log('adding button');
+  if (element.getElementsByClassName("pdf_download_button").length) return;
 
   // 버튼 엘리먼트 생성
   var but = document.createElement("button");
   but.innerHTML = "Download";
-  but.class = "pdf_download_button";
+  but.className = "pdf_download_button";
 
-  console.log('title = ' + title);
-  console.log('contentId = ' + titleToContentId[title + '.pdf']);
-  
   if (titleToContentId[title + '.pdf']) element.appendChild(but);
 
   but.addEventListener("click", function (event) {
@@ -102,18 +96,17 @@ function init() {
   data_user_id = root.getAttribute('data-user_id');
   data_role = root.getAttribute('data-role');
 
-  // console.log(data_course_id, data_user_login, data_user_id);
   // root 엘리먼트에 새로운 component-wrapper 노드가 추가되면 다운로드 버튼 추가 함수 호출하기
   root.addEventListener('DOMNodeInserted', function () {
     const components_type1 = root.getElementsByClassName("xncb-component-wrapper  ");
     for (var i = 0; i < components_type1.length; ++i) {
-      addDownloadButton(components_type1[i], components_type1[i].getElementsByClassName("xncb-component-title")[0].innerHTML);
+      const title = components_type1[i].getElementsByClassName("xncb-component-title")[0].innerHTML;
+      addDownloadButton(components_type1[i], title);
     }
     const components_type2 = root.getElementsByClassName("xnci-description pdf");
     for (var i = 0; i < components_type2.length; ++i) {
-      // console.log(components_type2[i]);
-      // console.log(components_type2[i].getElementsByClassName("xnci-component-title")[0].innerHTML);
-      addDownloadButton(components_type2[i].getElementsByClassName("xnci-component-description-row-right")[0], components_type2[i].getElementsByClassName("xnci-component-title")[0].innerHTML);
+      const title = components_type2[i].getElementsByClassName("xnci-component-title")[0].innerHTML;
+      addDownloadButton(components_type2[i].getElementsByClassName("xnci-component-description-row-right")[0], title);
     }
   });
 }
