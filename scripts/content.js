@@ -3,6 +3,9 @@ var data_course_id = 0, data_user_login = 0, data_user_id = 0, data_role = 0;
 
 var check = 0;
 
+let btnList = []
+let downloadHistory = new Array();
+
 function sleep(ms) {
   const wakeUpTime = Date.now() + ms;
   while (Date.now() < wakeUpTime) { }
@@ -34,6 +37,13 @@ function sendDownloadMessage(myUrl, myFilename) {
 function downloadPDF(title) {
   pdfname = title + '.pdf';
   pdflink = 'https://hycms.hanyang.ac.kr/contents14/hanyang101/' + titleToContentId[pdfname] + '/contents/web_files/original.pdf';
+
+  // 현재 파일을 다운로드 한적 없다면 다운로드 기록을 남기고 저장
+  if(!downloadHistory.includes(titleToContentId[pdfname])) {
+    downloadHistory.push(titleToContentId[pdfname])
+    chrome.storage.local.set({'saved': downloadHistory});
+  }
+
   sendDownloadMessage(pdflink, pdfname);
 }
 
@@ -71,7 +81,13 @@ function addDownloadButton(element, title) {
   but.innerHTML = "Download";
   but.className = "pdf_download_button";
 
-  if (titleToContentId[title + '.pdf']) element.appendChild(but);
+  if (titleToContentId[title + '.pdf']) {
+    element.appendChild(but);
+    if (downloadHistory.includes(titleToContentId[title + '.pdf'])) {
+      but.style.backgroundColor = 'darkGray';
+    }
+  
+  }
 
   but.addEventListener("click", function (event) {
     but.style.backgroundColor = 'darkGray';
@@ -79,10 +95,51 @@ function addDownloadButton(element, title) {
     // pdf에 해당하는 content id가 있을 경우 downloadPDF 함수 호출
     if (titleToContentId[title + '.pdf']) downloadPDF(title);
   });
+
+  btnList.push(but);
   
 }
 
-function init() {
+function addAllButton() {
+    const iframe = document.getElementById("tool_content");
+    const root = iframe.contentWindow.document.getElementById("root");
+    // root 엘리먼트에 새로운 component-wrapper 노드가 추가되면 다운로드 버튼 추가 함수 호출하기
+    root.addEventListener('DOMNodeInserted', function () {
+      const components_type1 = root.getElementsByClassName("xncb-component-wrapper  ");
+      for (var i = 0; i < components_type1.length; ++i) {
+        const title = components_type1[i].getElementsByClassName("xncb-component-title")[0].innerHTML;
+        addDownloadButton(components_type1[i].getElementsByClassName("xncb-component-sub-wrapper")[0], title);
+      }
+      const components_type2 = root.getElementsByClassName("xnci-description pdf");
+      for (var i = 0; i < components_type2.length; ++i) {
+        const title = components_type2[i].getElementsByClassName("xnci-component-title")[0].innerHTML;
+        addDownloadButton(components_type2[i].getElementsByClassName("xnci-component-description-row-right")[0], title);
+      }
+    });
+
+    let resetBtn = document.createElement('input');
+    resetBtn.setAttribute('type', 'button');
+    resetBtn.className = 'xncb-all-sections-header-learn_status-link';
+    resetBtn.value = '다운로드 기록 초기화';
+
+    resetBtn.addEventListener("click", function (event) {
+      downloadHistory = [];
+      chrome.storage.local.set({'saved': downloadHistory});
+
+      for (let btn of btnList) {
+        btn.style.backgroundColor = 'lightGray';
+      } 
+
+    });
+
+    let resetBtnPos = iframe.contentWindow.document.getElementsByClassName("xncb-all-sections-header-right-wrapper")[0];
+    resetBtnPos.appendChild(resetBtn)
+    
+
+}
+
+
+async function init() {
   // iframe의 id가 root인 div 가져오기
   const iframe = document.getElementById("tool_content");
   const root = iframe.contentWindow.document.getElementById("root");
@@ -93,19 +150,10 @@ function init() {
   data_user_id = root.getAttribute('data-user_id');
   data_role = root.getAttribute('data-role');
 
-  // root 엘리먼트에 새로운 component-wrapper 노드가 추가되면 다운로드 버튼 추가 함수 호출하기
-  root.addEventListener('DOMNodeInserted', function () {
-    const components_type1 = root.getElementsByClassName("xncb-component-wrapper  ");
-    for (var i = 0; i < components_type1.length; ++i) {
-      const title = components_type1[i].getElementsByClassName("xncb-component-title")[0].innerHTML;
-      addDownloadButton(components_type1[i].getElementsByClassName("xncb-component-sub-wrapper")[0], title);
-    }
-    const components_type2 = root.getElementsByClassName("xnci-description pdf");
-    for (var i = 0; i < components_type2.length; ++i) {
-      const title = components_type2[i].getElementsByClassName("xnci-component-title")[0].innerHTML;
-      addDownloadButton(components_type2[i].getElementsByClassName("xnci-component-description-row-right")[0], title);
-    }
-  });
+  downloadHistory = (await chrome.storage.local.get(['saved'])).saved ?? [];
+
+  addAllButton();
+  iframe.onload = addAllButton;
 }
 
 window.onload = function () {
